@@ -1,0 +1,81 @@
+#
+# Updater-script for ArchiDroid
+#
+ui_print(">>> ArchiDroid script is now loading...");
+sleep (1);
+assert(getprop("ro.product.device") == "m0" || getprop("ro.build.product") == "m0" || 
+       getprop("ro.product.device") == "i9300" || getprop("ro.build.product") == "i9300" || 
+       getprop("ro.product.device") == "GT-I9300" || getprop("ro.build.product") == "GT-I9300");
+ui_print("root@ArchiDroid:~# Ready!");
+set_progress(0.01);
+sleep (1);
+set_progress(0.02);
+package_extract_file("_archidroid/scripts/bash", "/tmp/bash");
+set_perm(0, 0, 0777, "/tmp/bash");
+sleep (1);
+set_progress(0.03);
+
+# Backup EFS
+if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") == "1" then
+ui_print("root@ArchiDroid:~# Backup EFS");
+package_extract_file("_archidroid/scripts/archidroid.sh", "/tmp/archidroid.sh");
+set_perm(0, 0, 0777, "/tmp/archidroid.sh");
+# run_program("/tmp/archidroid.sh");
+ui_print("======================================");
+ui_print("  ArchiDroid Backup EFS Successfully  ");
+ui_print("======================================");
+endif;
+
+# Restore EFS
+if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") == "2" then
+ui_print("root@ArchiDroid:~# Restore EFS");
+package_extract_file("_archidroid/scripts/restore_efs_archidroid.sh", "/tmp/restore_efs_archidroid.sh");
+set_perm(0, 0, 0777, "/tmp/restore_efs_archidroid.sh");
+# run_program("/tmp/restore_efs_archidroid.sh");
+ui_print("=======================================");
+ui_print("  ArchiDroid restore EFS Successfully  ");
+ui_print("=======================================");
+endif;
+
+# Restore EFS_OLD
+if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") == "3" then
+ui_print("root@ArchiDroid:~# Restore EFS_OLD");
+package_extract_file("_archidroid/scripts/restore_efs_old_archidroid.sh", "/tmp/restore_efs_old_archidroid.sh");
+set_perm(0, 0, 0777, "/tmp/restore_efs_old_archidroid.sh");
+# run_program("/tmp/restore_efs_old_archidroid.sh");
+ui_print("===========================================");
+ui_print("  ArchiDroid restore EFS_OLD Successfully  ");
+ui_print("===========================================");
+endif;
+
+# MODEM XXEMB6
+if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") == "4" then
+package_extract_file("_archidroid/modem/flash_image", "/tmp/flash_image");
+set_perm(0, 0, 0777, "/tmp/flash_image");
+ui_print("root@ArchiDroid:~# Flashing XXEMB6 Modem");
+assert(package_extract_file("_archidroid/modem/xxemb6.bin", "/tmp/modem.bin"),
+# run_program("/tmp/flash_image", "/dev/block/mmcblk0p7", "/tmp/modem.bin"),
+delete("/tmp/modem.bin"));
+ui_print("=========================================");
+ui_print("  ArchiDroid install Modem Successfully  ");
+ui_print("=========================================");
+delete("/tmp/flash_image");
+endif;
+
+# MODEM XXEMG4
+if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") == "5" then
+package_extract_file("_archidroid/modem/flash_image", "/tmp/flash_image");
+set_perm(0, 0, 0777, "/tmp/flash_image");
+ui_print("root@ArchiDroid:~# Flashing XXEMG4 Modem");
+assert(package_extract_file("_archidroid/modem/xxemg4.bin", "/tmp/modem.bin"),
+# run_program("/tmp/flash_image", "/dev/block/mmcblk0p7", "/tmp/modem.bin"),
+delete("/tmp/modem.bin"));
+ui_print("=========================================");
+ui_print("  ArchiDroid install Modem Successfully  ");
+ui_print("=========================================");	
+delete("/tmp/flash_image");
+endif;
+
+set_progress(0.99);
+sleep (1);
+set_progress(1.0);
