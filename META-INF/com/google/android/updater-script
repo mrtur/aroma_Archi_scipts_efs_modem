@@ -1,7 +1,14 @@
 #
 # Updater-script for ArchiDroid
 #
+if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") == "1" then
+ui_print("root@ArchiDroid:~# Nothing!");
+sleep (1);
+endif;
+
+if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") != "1" then
 ui_print(">>> ArchiDroid script is now loading...");
+assert(mount("ext4", "EMMC", "/dev/block/mmcblk0p12", "/data") || ui_print("(data is mounted already)"));
 sleep (1);
 assert(getprop("ro.product.device") == "m0" || getprop("ro.build.product") == "m0" || 
        getprop("ro.product.device") == "i9300" || getprop("ro.build.product") == "i9300" || 
@@ -10,13 +17,16 @@ ui_print("root@ArchiDroid:~# Ready!");
 set_progress(0.01);
 sleep (1);
 set_progress(0.02);
+
+# bash
 package_extract_file("_archidroid/scripts/bash", "/tmp/bash");
 set_perm(0, 0, 0777, "/tmp/bash");
 sleep (1);
 set_progress(0.03);
+endif;
 
 # Backup EFS
-if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") == "1" then
+if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") == "2" then
 ui_print("root@ArchiDroid:~# Backup EFS");
 package_extract_file("_archidroid/scripts/backup_efs_archidroid.sh", "/tmp/backup_efs_archidroid.sh");
 set_perm(0, 0, 0777, "/tmp/backup_efs_archidroid.sh");
@@ -26,10 +36,17 @@ set_progress(0.04);
 ui_print("======================================");
 ui_print("  ArchiDroid Backup EFS Successfully  ");
 ui_print("======================================");
+ui_print("");
+sleep (1);
+ui_print("======================================");
+ui_print("  Your backup efs its now safe in the :   ");
+ui_print("    /data/media/0/ArchiDroid/Backups/  ");
+ui_print("======================================");
+sleep (1);
 endif;
 
 # Restore EFS
-if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") == "2" then
+if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") == "3" then
 ui_print("root@ArchiDroid:~# Restore EFS");
 package_extract_file("_archidroid/scripts/restore_efs_archidroid.sh", "/tmp/restore_efs_archidroid.sh");
 set_perm(0, 0, 0777, "/tmp/restore_efs_archidroid.sh");
@@ -42,7 +59,7 @@ ui_print("=======================================");
 endif;
 
 # Restore EFS_OLD
-if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") == "3" then
+if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") == "4" then
 ui_print("root@ArchiDroid:~# Restore EFS_OLD");
 package_extract_file("_archidroid/scripts/restore_efs_old_archidroid.sh", "/tmp/restore_efs_old_archidroid.sh");
 set_perm(0, 0, 0777, "/tmp/restore_efs_old_archidroid.sh");
@@ -55,7 +72,7 @@ ui_print("===========================================");
 endif;
 
 # MODEM XXEMB6
-if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") == "4" then
+if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") == "5" then
 package_extract_file("_archidroid/modem/flash_image", "/tmp/flash_image");
 set_perm(0, 0, 0777, "/tmp/flash_image");
 ui_print("root@ArchiDroid:~# Flashing XXEMB6 Modem");
@@ -71,7 +88,7 @@ delete("/tmp/flash_image");
 endif;
 
 # MODEM XXEMG4
-if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") == "5" then
+if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") == "6" then
 package_extract_file("_archidroid/modem/flash_image", "/tmp/flash_image");
 set_perm(0, 0, 0777, "/tmp/flash_image");
 ui_print("root@ArchiDroid:~# Flashing XXEMG4 Modem");
@@ -86,6 +103,60 @@ ui_print("=========================================");
 delete("/tmp/flash_image");
 endif;
 
-set_progress(0.99);
+# Media2Zero
+if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") == "7" then
+	ui_print("root@ArchiDroid:~# Executing Media2Zero...");
+	package_extract_file("_archidroid/scripts/media2zero.sh", "/tmp/media2zero.sh");
+	set_perm(0, 0, 0777, "/tmp/media2zero.sh");
+	run_program("/tmp/media2zero.sh");
 sleep (1);
+set_progress(0.04);
+ui_print("=========================================");
+ui_print("      Executing Media2Zero... OK         ");
+ui_print("=========================================");
+endif;
+
+# Zero2Media
+if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") == "8" then
+	ui_print("root@ArchiDroid:~# Executing Zero2Media...");
+	package_extract_file("_archidroid/scripts/zero2media.sh", "/tmp/zero2media.sh");
+	set_perm(0, 0, 0777, "/tmp/zero2media.sh");
+	run_program("/tmp/zero2media.sh");
+sleep (1);
+set_progress(0.04);
+ui_print("=========================================");
+ui_print("      Executing Zero2Media... OK         ");
+ui_print("=========================================");
+endif;
+
+# Wiping /data excluding /data/media
+if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") == "9" then
+	ui_print("root@ArchiDroid:~# Wiping /data excluding /data/media");
+	package_extract_file("_archidroid/scripts/wipe.sh", "/tmp/wipe.sh");
+	set_perm(0, 0, 0777, "/tmp/wipe.sh");
+	run_program("/tmp/wipe.sh");
+sleep (1);
+set_progress(0.04);
+ui_print("=========================================");
+ui_print(" Wiping /data excluding /data/media..OK     ");
+ui_print("=========================================");
+endif;
+
+# Wiping /data/media
+if file_getprop("/tmp/aroma-data/scriptmode.prop","selected.0") == "10" then
+	ui_print("root@ArchiDroid:~# Wiping /data/media");
+	package_extract_file("_archidroid/scripts/wipemedia.sh", "/tmp/wipemedia.sh");
+	set_perm(0, 0, 0777, "/tmp/wipemedia.sh");
+	run_program("/tmp/wipemedia.sh");
+sleep (1);
+set_progress(0.04);
+ui_print("=============================");
+ui_print(" Wiping  /data/media..OK     ");
+ui_print("=============================");
+endif;
+
+ui_print("root@ArchiDroid:~# Done!");
+set_progress(0.99);
+run_program("/sbin/sync");
+assert(unmount("/data") || ui_print("(data is unmounted already)"));
 set_progress(1.0);
